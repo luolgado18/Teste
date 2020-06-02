@@ -1,0 +1,289 @@
+package programa;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+public class data 
+{
+    private Integer dia;
+    private Integer mes;
+    private Integer ano;
+
+    /*
+     * Validado o dia mes ano e faz o calculo da idade
+     */
+    public data(Integer dia, Integer mes, Integer ano) 
+    {
+        if (!validaAno(ano)) 
+        {
+            System.out.println("Ano Inválido!!!");
+        }
+        if (!validaMes(mes)) 
+        {
+            System.out.println("Mês Inválido!!!");
+        }
+        if (!validaDia(ano, mes, dia)) 
+        {
+            System.out.println("Dia Inválido!!!");
+        } 
+        else 
+        {
+            this.dia = dia;
+            this.mes = mes;
+            this.ano = ano;
+            Calendar Aniversario = new GregorianCalendar(ano, mes, dia);
+            Date AniversarioData = Aniversario.getTime();
+
+            System.out.println(calculoidade(AniversarioData));
+        };
+    }
+
+    /*
+     * Valida se o Ano informado não é maior que o ano atual
+     */
+
+    public boolean validaAno(Integer anoV) 
+    {
+        boolean anoValidado = false;
+        Calendar dataAtual;
+
+        dataAtual = dataHoje();
+
+        if (anoV <= dataAtual.get(Calendar.YEAR)) 
+        {
+            anoValidado = true;
+        }
+        return anoValidado;
+    }
+
+    /*
+     * Valida se o mês informado esta entre 1 e 12 (Janeiro a Dezembro)
+     */
+    public boolean validaMes(Integer mesV) 
+    {
+        boolean mesValidado = false;
+        if (mesV < 1 && mesV > 12) 
+        {
+            mesValidado = true;
+        }
+        return mesValidado;
+    }
+
+    /*
+     * Valida o Dia informado de acordo com as regras do ano (bisexto ou não) e Mes
+     * Nessa etapa o Ano e o Mes já são validos
+     */
+
+    public boolean validaDia(Integer anoV, Integer mesV, Integer diav) 
+    {
+        Integer diasdoMes = 0;
+        boolean diaValidado = false;
+        if (mesV == 4 || mesV == 6 || mesV == 9 || mesV == 11) 
+        {
+            diasdoMes = 30;
+        } 
+        else
+           if (mesV == 1 || mesV == 3 || mesV == 5 || mesV == 7 || mesV == 8 || mesV == 10 || mesV == 12) 
+           {
+              diasdoMes = 31;
+           } 
+           else
+            // Como o mês já está validado a unica possibilidade é o mes = 2 (Fevereiro) 
+              if ((anoV % 4) == 0) // Verificando se ano bisexto
+              {
+                  diasdoMes = 29;
+              } 
+              else 
+              {
+                  diasdoMes = 28;
+              }
+        if (diav <= diasdoMes) 
+        {
+            diaValidado = true;
+        }
+        return diaValidado;
+    }
+
+
+
+    /*
+     * Calculo a Idade da Pessao através da Data do Nascimento
+     */
+
+    public static String calculoidade(Date data) 
+    {
+        Integer anos = 0;
+        Integer meses = 0;
+        Integer dias = 0;
+
+        Calendar dataAtual;
+        Calendar dataNascimento;
+
+        dataAtual = dataHoje();
+        dataNascimento = Calendar.getInstance();
+        dataNascimento.setTime(data);
+
+        anos = (dataAtual.get(Calendar.YEAR) - dataNascimento.get(Calendar.YEAR));
+        meses = (dataAtual.get(Calendar.MONTH) - dataNascimento.get(Calendar.MONTH));
+        dias = (dataAtual.get(Calendar.DAY_OF_MONTH) - dataNascimento.get(Calendar.DAY_OF_MONTH));
+
+        if (dataAtual.get(Calendar.MONTH) == dataNascimento.get(Calendar.MONTH)) 
+        {
+            if (dataAtual.get(Calendar.DAY_OF_MONTH) < dataNascimento.get(Calendar.DAY_OF_MONTH)) 
+            {
+                dias = 30 + dias;
+                meses = 12 + meses;
+                anos = anos - 1;
+            }
+        } 
+        else
+           if (dataAtual.get(Calendar.MONTH) < dataNascimento.get(Calendar.MONTH)) 
+           {
+              if (dataAtual.get(Calendar.DAY_OF_MONTH) >= dataNascimento.get(Calendar.DAY_OF_MONTH)) 
+              {
+                  meses = 12 + meses;
+                  anos = anos - 1;
+              } 
+              else 
+              {
+                  dias = 30 + dias;
+                  meses = 12 + meses;
+                  anos = anos - 1;
+              }
+           } 
+           else
+              if (dataAtual.get(Calendar.DAY_OF_MONTH) < dataNascimento.get(Calendar.DAY_OF_MONTH)) 
+              {
+                  dias = 30 + dias;
+                  meses = meses - 1;
+              }
+        return formatarIdade(formatar(anos, meses, dias));
+    }
+
+    // Recupera a data de hoje    
+    public static Calendar dataHoje() 
+    {
+        Calendar dataAtual;
+        dataAtual = Calendar.getInstance();
+        return dataAtual;
+    }
+
+    /* 
+     *  Concatena-se 0 se o valor menor que 10 e logo apos o numero adicionasse espaço.
+     *  @return idade formatada para o formato 00 00 00.
+     */
+    public static String formatar(Integer ano, Integer mes, Integer dia) 
+    {
+        String idade = "";
+        if (ano.intValue() < 10) 
+        {
+            idade = (new StringBuilder()).append(idade).append("0").append(ano).append(" ").toString();
+        } 
+        else 
+        {
+            idade = (new StringBuilder()).append(idade).append(ano).append(" ").toString();
+        }
+        if (mes.intValue() < 10) 
+        {
+            idade = (new StringBuilder()).append(idade).append("0").append(mes).append(" ").toString();
+        } 
+        else 
+        {
+            idade = (new StringBuilder()).append(idade).append(mes).append(" ").toString();
+        }
+        if (dia.intValue() < 10) 
+        {
+            idade = (new StringBuilder()).append(idade).append("0").append(dia).append(" ").toString();
+        } 
+        else 
+        {
+            idade = (new StringBuilder()).append(idade).append(dia).append(" ").toString();
+        }
+        return idade;
+    }
+
+    // Formata a idade com o literal 99 Ano(s) 99 Mes(es) 99 Dia(s)
+
+    public static String formatarIdade(String idadeV) 
+    {
+        String idade = "";
+        String anos = null;
+        String meses = null;
+        String dias = null;
+        String CharArray[] = idadeV.split(" ");
+
+        anos = CharArray[0];
+        meses = CharArray[1];
+        dias = CharArray[2];
+
+        idade = formataAno(anos);
+        idade = idade.concat(formataMes(meses).toString());
+        idade = idade.concat(formataDia(dias).toString());
+
+        return idade;
+    }
+
+
+    /* Formata com o literal Ano ou Anos  
+     * se Anov for "00" retorna "" (vazio)
+     */
+    public static String formataAno(String anoV) 
+    {
+        String anoformatado = "";
+        if (!(anoV == "00")) 
+        {
+            if (anoV == "01") 
+            {
+                anoformatado = anoformatado.concat((new StringBuilder()).append(anoV).append(" Ano ").toString());
+            } 
+            else 
+            {
+                anoformatado = anoformatado.concat((new StringBuilder()).append(anoV).append(" Anos ").toString());
+            }
+        }
+        return anoformatado;
+    }
+
+    /* Formata com o literal Mes ou Meses  
+     * se Mesv for "00" retorna "" (vazio)     
+     */
+
+    public static String formataMes(String mesV) 
+    {
+        String mesformatado = "";
+        if (!(mesV == "00")) 
+        {
+            if (mesV == "01") 
+            {
+                mesformatado = mesformatado.concat((new StringBuilder()).append(mesV).append(" Mes ").toString());
+            } 
+            else 
+            {
+                mesformatado = mesformatado.concat((new StringBuilder()).append(mesV).append(" Meses ").toString());
+            }
+        }
+        return mesformatado;
+    }
+
+    /* Formata com o literal Dia ou Dias  
+     * se diaV for "00" retorna "" (vazio)
+     */
+    public static String formataDia(String diaV) 
+    {
+        String diaformatado = "";
+        if (!(diaV == "00")) 
+        {
+            if (diaV == "01") 
+            {
+                diaformatado = diaformatado.concat((new StringBuilder()).append(diaV).append(" Dia ").toString());
+            } 
+            else 
+            {
+                diaformatado = diaformatado.concat((new StringBuilder()).append(diaV).append(" Dias ").toString());
+            }
+        }
+        return diaformatado;
+    }
+
+}
